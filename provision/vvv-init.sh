@@ -28,7 +28,6 @@ echo -e $WP_VERSION;
 if [ ! -z "${PUBLIC_DIR}" ]; then
   PUBLIC_DIR_PATH="${PUBLIC_DIR_PATH}/${PUBLIC_DIR}"
 fi
-PUBLIC_DIR_PATH="${VVV_PATH_TO_SITE}"
 
 # Make a database, if we don't already have one
 setup_database() {
