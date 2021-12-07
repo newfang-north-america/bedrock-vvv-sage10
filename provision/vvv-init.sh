@@ -87,3 +87,53 @@ END_HEREDOC
     noroot sed -i "s#{{LIVE_URL}}##" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
   fi
 }
+
+install_bedrock() {
+  if [ ! -d "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/public_html/wp" ]; then
+    if [ ! -d "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/public_html" ]; then
+      echo " * Install fresh Bedrock"
+      noroot composer create-project roots/bedrock "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}"
+    else
+      echo " * Install Bedrock dependencies"
+      cd "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}"
+      noroot composer install
+    fi
+    initial_env
+  fi
+}
+
+initial_env() {
+  if [[ ! -f "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/.env" ]]; then
+    echo " * Creating .env"
+    noroot cp "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/.env.example" "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/.env"
+  fi
+  echo " * Setting up .env"
+  noroot sed -i "s/DB_NAME='database_name'/DB_NAME='${DB_NAME}'/g" "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/.env"
+  noroot sed -i "s/DB_USER='database_user'/DB_USER='wp'/g" "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/.env"
+  noroot sed -i "s/DB_PASSWORD='database_password'/DB_PASSWORD='wp'/g" "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/.env"
+  noroot sed -i "s/WP_HOME='http:\/\/example.com'/WP_HOME='https:\/\/${DOMAIN}'/g" "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/.env"
+}
+
+install_wp() {
+  cd "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}"
+  if ! $(noroot wp core is-installed ); then
+    echo " * WordPress is present but isn't installed to the database"
+    echo " * Installing WordPress"
+    ADMIN_USER=$(get_config_value 'admin_user' "admin")
+    ADMIN_PASSWORD=$(get_config_value 'admin_password' "password")
+    ADMIN_EMAIL=$(get_config_value 'admin_email' "admin@local.test")
+
+    echo " * Installing using wp core install --url=\"${DOMAIN}\" --title=\"${SITE_TITLE}\" --admin_name=\"${ADMIN_USER}\" --admin_email=\"${ADMIN_EMAIL}\" --admin_password=\"${ADMIN_PASSWORD}\""
+    cd "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}"
+    noroot wp core install --url="${DOMAIN}" --title="${SITE_TITLE}" --admin_name="${ADMIN_USER}" --admin_email="${ADMIN_EMAIL}" --admin_password="${ADMIN_PASSWORD}"
+    echo " * WordPress was installed, with the username '${ADMIN_USER}', and the password '${ADMIN_PASSWORD}' at '${ADMIN_EMAIL}'"
+  fi
+}
+
+cd "${VVV_PATH_TO_SITE}"
+
+setup_database
+setup_nginx_folders
+copy_nginx_configs
+install_bedrock
+install_wp
