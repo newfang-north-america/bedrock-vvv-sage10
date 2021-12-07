@@ -94,8 +94,6 @@ install_bedrock() {
       noroot composer create-project roots/bedrock web 
     else
       echo " * Install Bedrock dependencies"
-      cd "${VVV_PATH_TO_SITE}"
-      noroot composer install web
     fi
     initial_env
   fi
