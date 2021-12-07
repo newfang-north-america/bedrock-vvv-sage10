@@ -60,7 +60,7 @@ copy_nginx_configs() {
   fi
 
   echo " * Applying public dir setting to Nginx config"
-  noroot sed -i "s#{vvv_public_dir}#/${PUBLIC_DIR}#" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
+  noroot sed -i "s#{vvv_public_dir}#${PUBLIC_DIR}#" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
 
   LIVE_URL=$(get_config_value 'live_url' '')
   if [ ! -z "$LIVE_URL" ]; then
@@ -135,5 +135,6 @@ cd "${VVV_PATH_TO_SITE}"
 setup_database
 setup_nginx_folders
 copy_nginx_configs
+initial_env
 install_bedrock
 install_wp
