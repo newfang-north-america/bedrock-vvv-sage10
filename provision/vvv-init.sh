@@ -85,14 +85,14 @@ END_HEREDOC
 }
 
 install_bedrock() {
-  if [ ! -d "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/public_html/wp" ]; then
-    if [ ! -d "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/public_html" ]; then
+  if [ ! -d "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/web/wp" ]; then
+    if [ ! -d "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/web" ]; then
       echo " * Install fresh Bedrock"
-      noroot composer create-project roots/bedrock "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}"
+      noroot composer create-project roots/bedrock "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}" .
     else
       echo " * Install Bedrock dependencies"
       cd "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}"
-      noroot composer install
+      noroot composer install . 
     fi
     initial_env
   fi
