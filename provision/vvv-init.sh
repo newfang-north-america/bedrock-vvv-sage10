@@ -91,12 +91,9 @@ install_bedrock() {
   if [ ! -d "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/web/wp" ]; then
     if [ ! -d "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}/web" ]; then
       echo " * Install fresh Bedrock"
-      cd ${VVV_PATH_TO_SITE}/${PUBLIC_DIR}
-      noroot composer create-project roots/bedrock web
+      noroot composer create-project roots/bedrock web 
     else
       echo " * Install Bedrock dependencies"
-      cd "${VVV_PATH_TO_SITE}/${PUBLIC_DIR}"
-      noroot composer install . 
     fi
     initial_env
   fi
