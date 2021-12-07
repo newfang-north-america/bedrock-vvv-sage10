@@ -10,7 +10,7 @@ DB_NAME=$(get_config_value 'db_name' "${VVV_SITE_NAME}")
 DB_NAME=${DB_NAME//[\\\/\.\<\>\:\"\'\|\?\!\*]/}
 DB_PREFIX=$(get_config_value 'db_prefix' 'wp_')
 DOMAIN=$(get_primary_host "${VVV_SITE_NAME}".test)
-PUBLIC_DIR=$(get_config_value 'public_dir' "public_html")
+PUBLIC_DIR=$(get_config_value 'public_dir' "web")
 SITE_TITLE=$(get_config_value 'site_title' "${DOMAIN}")
 WP_LOCALE=$(get_config_value 'locale' 'en_US')
 WP_TYPE=$(get_config_value 'wp_type' "single")
@@ -24,3 +24,9 @@ echo -e $SITE_TITLE;
 echo -e $WP_LOCALE;
 echo -e $WP_TYPE;
 echo -e $WP_VERSION;
+
+PUBLIC_DIR_PATH="${VVV_PATH_TO_SITE}"
+if [ ! -z "${PUBLIC_DIR}" ]; then
+  PUBLIC_DIR_PATH="${PUBLIC_DIR_PATH}/${PUBLIC_DIR}"
+fi
+echo -e $PUBLIC_DIR_PATH;
